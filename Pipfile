@@ -7,6 +7,8 @@ verify_ssl = true
 
 [packages]
 pyperclip = "*"
+pyqt5 = "*"
+pynvim = "*"
 
 [requires]
 python_version = "3.8"
