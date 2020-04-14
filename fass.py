@@ -1,4 +1,4 @@
-import fassword.entries as entries
+import fassword.cli as cli
 from fassword.utils import load_data
 from sys import exit
 import argparse
@@ -50,24 +50,24 @@ def main():
     data = load_data()
 
     if not data:
-        entries.init_data()
+        cli.init_data()
 
-    if entries.unlock_entries():
+    if cli.unlock_entries():
         if not args.entry and args.list:
-            entries.list_entries()
+            cli.list_entries()
         elif not args.entry:
             parser.print_help()
             exit('\n Error: No entry specified')
 
         if args.add:
-            entries.add_entry(args.entry)
+            cli.add_entry(args.entry)
         elif args.update:
-            entries.update_entry(args.entry)
+            cli.update_entry(args.entry)
         elif args.remove:
-            entries.delete_entry(args.entry)
+            cli.delete_entry(args.entry)
         else:
             if args.entry:
-                entries.decrypt_entry(args.entry)
+                cli.decrypt_entry(args.entry)
 
     else:
         print('Invalid Master Password')
