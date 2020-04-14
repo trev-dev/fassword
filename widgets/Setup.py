@@ -31,18 +31,18 @@ class Setup(QWidget):
         self.password.setEchoMode(QLineEdit.Password)
         self.confirm.setEchoMode(QLineEdit.Password)
         submit = QPushButton('Submit')
-        hbox = QVBoxLayout()
+        vbox = QVBoxLayout()
 
-        hbox.addWidget(password_label)
-        hbox.addWidget(self.password)
-        hbox.addWidget(confirm_label)
-        hbox.addWidget(self.confirm)
-        hbox.addWidget(submit)
-        hbox.addWidget(self.feedback)
+        vbox.addWidget(password_label)
+        vbox.addWidget(self.password)
+        vbox.addWidget(confirm_label)
+        vbox.addWidget(self.confirm)
+        vbox.addWidget(submit)
+        vbox.addWidget(self.feedback)
 
         submit.clicked.connect(self.submit_handler)
 
-        self.setLayout(hbox)
+        self.setLayout(vbox)
 
     def submit_handler(self):
         if self.password.text() != self.confirm.text():
