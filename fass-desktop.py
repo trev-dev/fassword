@@ -1,5 +1,5 @@
 import sys
-from fassword.entries import init_data
+from fassword.cli import init_data
 from fassword.utils import load_data
 from widgets.Setup import Setup
 from PyQt5.QtWidgets import (
@@ -22,6 +22,7 @@ class Fassword(QWidget):
     def initUI(self):
         self.setWindowTitle(self.title)
         self.setGeometry(*self.position, *self.dimens)
+        self.setFixedSize(*self.dimens)
         self.show()
         if not self.data:
             self.setup.show()
