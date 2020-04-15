@@ -56,3 +56,13 @@ def decrypt(string, key):
     fernet = Fernet(key)
     decrypted = fernet.decrypt(bytes(string, 'utf-8'))
     return decrypted.decode('utf-8')
+
+
+def create_storage(master, key): 
+    return {
+        'key': key,
+        'master': master,
+        'entry': {
+
+        }
+    }

@@ -3,7 +3,8 @@ from fassword.utils import (
     load_data,
     save_data,
     decrypt,
-    encrypt
+    encrypt,
+    create_storage
 )
 import pyperclip
 from sys import exit
@@ -32,13 +33,7 @@ def init_data():
     password = choose_password()
     master, key = encrypt(password)
 
-    data = {
-        'key': key,
-        'master': master,
-        'entry': {
-
-        }
-    }
+    data = create_storage(master, key)
 
     save_data(data)
     exit('\nFassword is ready. Type fass -h for options\n')
