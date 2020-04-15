@@ -1,6 +1,10 @@
 import sys
-from fassword.cli import init_data
-from fassword.utils import load_data
+from fassword.utils import (
+    load_data,
+    save_data,
+    create_storage,
+    encrypt
+)
 from widgets.Setup import Setup
 from PyQt5.QtWidgets import (
     QApplication,
@@ -23,12 +27,16 @@ class Fassword(QWidget):
         self.setWindowTitle(self.title)
         self.setGeometry(*self.position, *self.dimens)
         self.setFixedSize(*self.dimens)
-        self.show()
         if not self.data:
             self.setup.show()
+        else:
+            self.show()
 
     def new_master(self, password):
-        print(password)
+        self.show()
+        self.setup.hide()
+        master, key = encrypt(password)
+        save_data(create_storage(master, key))
 
 
 if __name__ == "__main__":
