@@ -1,5 +1,5 @@
 import json
-from getpass import getpass
+from cryptography.fernet import Fernet
 
 
 def yes_or_no(prompt):
@@ -15,21 +15,6 @@ def yes_or_no(prompt):
     elif resp in yes:
         return True
     return False
-
-
-def choose_password():
-    passwords_match = False
-
-    while not passwords_match:
-        password = getpass(f'Enter new master password: ')
-        confirm = getpass(f'Confirm password: ')
-
-        if password == confirm:
-            passwords_match = True
-            break
-        print('\nPasswords do not match.\n')
-
-    return password
 
 
 def load_data():
@@ -53,3 +38,21 @@ def save_data(data):
     """
     with open('data.json', 'w+') as f:
         json.dump(data, f)
+
+
+def encrypt(string, key=False):
+    if not key:
+        key = Fernet.generate_key()
+    else:
+        key = bytes(key, 'utf-8')
+
+    fernet = Fernet(key)
+    encrypted = fernet.encrypt(bytes(string, 'utf-8'))
+
+    return (encrypted.decode('utf-8'), key.decode('utf-8'))
+
+
+def decrypt(string, key):
+    fernet = Fernet(key)
+    decrypted = fernet.decrypt(bytes(string, 'utf-8'))
+    return decrypted.decode('utf-8')

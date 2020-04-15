@@ -1,22 +1,40 @@
 from getpass import getpass
-from fassword.utils import load_data, save_data, choose_password
-from cryptography.fernet import Fernet
+from fassword.utils import (
+    load_data,
+    save_data,
+    decrypt,
+    encrypt
+)
 import pyperclip
 from sys import exit
+
+
+def choose_password():
+    passwords_match = False
+
+    while not passwords_match:
+        password = getpass(f'Enter new password: ')
+        confirm = getpass(f'Confirm password: ')
+
+        if password == confirm:
+            passwords_match = True
+            break
+        print('\nPasswords do not match.\n')
+
+    return password
 
 
 def init_data():
     data = load_data()
     print('\nInitializing Fassword\n')
 
+    print('You must choose a master password\n')
     password = choose_password()
-    key = Fernet.generate_key()
-    fern = Fernet(key)
-    master = fern.encrypt(bytes(password, 'utf-8'))
+    master, key = encrypt(password)
 
     data = {
-        'key': key.decode('utf-8'),
-        'master': master.decode('utf-8'),
+        'key': key,
+        'master': master,
         'entry': {
 
         }
@@ -34,11 +52,11 @@ def add_entry(entry):
 
     print(f'\nChoose a password for {entry}')
     password = choose_password()
-    f = Fernet(bytes(data['key'], 'utf-8'))
-    encrypted = f.encrypt(bytes(password, 'utf-8'))
+    encrypted = encrypt(password, data['key'])[0]
 
-    data['entry'][entry] = encrypted.decode('utf-8')
+    data['entry'][entry] = encrypted
     save_data(data)
+
     print(f'\nEntry for {entry} created!')
 
 
@@ -47,10 +65,9 @@ def decrypt_entry(entry):
     if entry not in data['entry']:
         exit(f'Entry for {entry} does not yet exist')
 
-    f = Fernet(bytes(data['key'], 'utf-8'))
-    password = f.decrypt(bytes(data['entry'][entry], 'utf-8'))
+    password = decrypt(data['entry'][entry], data['key'])
 
-    pyperclip.copy(password.decode('utf-8'))
+    pyperclip.copy(password)
     print(f'Password for {entry} copied to the clipboard')
 
 
@@ -60,11 +77,10 @@ def update_entry(entry):
     if entry not in data['entry']:
         exit(f'Entry for {entry} does not yet exist')
 
-    f = Fernet(bytes(data['key'], 'utf-8'))
     print(f'\nEnter the new password for {entry}')
     password = choose_password()
-    encrypted = f.encrypt(bytes(password, 'utf-8'))
-    data['entry'][entry] = encrypted.decode('utf-8')
+    encrypted = encrypt(password, data['key'])[0]
+    data['entry'][entry] = encrypted
     print('\nPassword Updated')
 
     save_data(data)
@@ -101,9 +117,8 @@ def list_entries():
 
 def unlock_entries():
     data = load_data()
-    attempt = bytes(getpass('Enter your master password: '), 'utf-8')
-    f = Fernet(bytes(data['key'], 'utf-8'))
-    master = f.decrypt(bytes(data['master'], 'utf-8'))
+    attempt = getpass('Enter your master password: ')
+    master = decrypt(data['master'], data['key'])
 
     if attempt == master:
         return True
